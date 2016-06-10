@@ -607,45 +607,20 @@ public class MainActivity extends ListActivity {
 
 				@Override
 				protected List<twitter4j.Status> doInBackground(Void... params) {
-
-					int page = 1;
 					ResponseList<twitter4j.Status> tl = null;
-					int total = 0;
-
-
-					while (true) {
-						Paging paging = new Paging(page++,COUNT_MAX);
-						try {
-							Thread.sleep(50);
-							if (tl == null) {
-								tl = mTwitter.getHomeTimeline(paging);
-							} else {
-
-								total = tl.size();
-								tl.addAll(mTwitter.getHomeTimeline(paging));
-							}
-
-							if (tl.size() == total) {
-								break;
-							}
-
-						} catch (TwitterException e) {
-							if (RATE_LIMITED_STATUS_CODE != e.getStatusCode()) {
-								continue;
-							}
-							e.printStackTrace();
-							break;
-						} catch (InterruptedException e) {
-							// TODO
-							e.printStackTrace();
-						}
-
+					try {
+						tl = mTwitter.getHomeTimeline();
+					} catch (TwitterException e) {
+						e.printStackTrace();
 					}
 					return tl;
-
-
-
 				}
+
+
+
+
+
+
 
 				@Override
 				protected void onPostExecute(List<twitter4j.Status> result) {
@@ -682,8 +657,8 @@ public class MainActivity extends ListActivity {
 
 					Paging paging = new Paging();
 					twitter4j.Status status = mAdapter.getItem(mAdapter.getCount()-1);
-					//paging.setMaxId(status.getId());
-					paging.setSinceId(status.getId());
+					paging.setMaxId(status.getId());
+					//paging.setSinceId(status.getId());
 
 					return mTwitter.getHomeTimeline(paging);
 				} catch (TwitterException e) {
